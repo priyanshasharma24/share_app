@@ -45,34 +45,42 @@ router.post("/",(req, res) => {
     });
 });
 
-// router.post('/send',async(req,res)=>{
-//     const {uuid,emailTo,emailFrom} = req.body
+router.post('/send',async(req,res)=>{
+    const {uuid,emailTo,emailFrom} = req.body
+    console.log(req.body)
 
-//     if(!uuid || !emailTo || !emailFrom){
-//         return res.status(422).send({error:"All fields are required"})
-//     }
+    if(!uuid || !emailTo || !emailFrom){
+        return res.status(422).send({error:"All fields are required"})
+    }
     
-//     const file = await File.findOne({uuid})
-//     if(file.sender){
-//         return res.status(422).send({error:"Email Aleady Sent"})
-//     }
+    const file = await File.findOne({uuid})
+    if(file.sender){
+        return res.status(422).send({error:"Email Aleady Sent"})
+    }
 
-//     file.sender = emailFrom;
-//     file.receiver = emailTo;
+    file.sender = emailFrom;
+    file.receiver = emailTo;
 
-//     const response = await file.save()
+    const response = await file.save()
 
-//     //send email
 
-//     const sendMail = require('../services/emailService')
-//     sendMail({
-//         from:emailFrom,
-//         to:emailTo,
-//         subject:"File Sharing",
-//         text:`${emailFrom} shared file with you`,
-//         html:'<h1>Hello From Priyanshu</h1>'
-//     })
+    //send email
 
-// })
+    const sendMail = require('../services/mailService')
+    sendMail({
+        from:emailFrom,
+        to:emailTo,
+        subject:"File Sharing",
+        text: `${emailFrom} shared file with you.\n File size: ${parseInt(file.size / 1000)} KB. \n Expires in 24 hours.\n Download link: ${process.env.BASE_URL}/files/${file.uuid}.`,
+        // html:require('../services/emailTemplate')({
+        //     emailFrom:emailFrom,
+        //     downloadLink:`${process.env.BASE_URL}/files/${file.uuid}`,
+        //     size:parseInt(file.size/1000)+'KB',
+        //     expires : `24 hours`
+        // })
+    })
+    res.status(200).json("email send Successfully")
+
+})
 
 module.exports = router;
