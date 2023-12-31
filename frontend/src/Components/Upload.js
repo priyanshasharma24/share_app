@@ -94,7 +94,7 @@ function Upload() {
                     formData.append("myfile", uploadedFile);
 
                     const res = await axios.post(
-                        "http://localhost:4000/api/files",
+                        "https://app-share-backend.onrender.com/api/files",
                         formData,
                         {
                             headers: {
@@ -120,7 +120,7 @@ function Upload() {
     const sendEmail = async(e) =>{
         e.preventDefault()
         try {
-            const res = await axios.post('http://localhost:4000/api/files/send',{uuid,emailTo,emailFrom})
+            const res = await axios.post('https://app-share-backend.onrender.com/api/files/send',{uuid,emailTo,emailFrom})
             console.log(res.data)
             alert(res.data)
         } catch (error) {
